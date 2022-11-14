@@ -42,7 +42,7 @@ install-cert-tool:
 
 install-server: server-install-header server-update server-upgrade install-lamp
 
-install-lamp: install-mariadb install-php install-apache2
+install-lamp: clean-php install-mariadb install-php install-apache2
 
 install-mariadb: install-cert-tool
 	$(call header,Install MariaDB)
@@ -62,13 +62,15 @@ install-mariadb: install-cert-tool
 	@echo "  => exit"
 	@sudo mysql
 
-install-php: install-cert-tool
-	$(call header,Install PHP)
+clean-php:
 	@echo "Remove previous bundled os php version"
 	@sudo apt remove --purge php*
+
+install-php: install-cert-tool
+	$(call header,Install PHP)
 	@echo " . Get & save last signing key"
 	@sudo wget -qO - https://packages.sury.org/php/apt.gpg | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/debian-php-8.gpg --import
-	@echo " . Updating source.list (mariadb.list)"
+	@echo " . Updating source.list (sury-php.list)"
 	@echo "deb https://packages.sury.org/php/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/sury-php.list
 	@echo " . Apt list update"
 	@sudo apt update && sudo apt upgrade -y
