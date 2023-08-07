@@ -21,7 +21,9 @@ install-php-switch:
 	@sudo ln -sfn ${PWD}/php/use-php74 /usr/local/bin/use-php74
 	@echo " . Install use-php81"
 	@sudo ln -sfn ${PWD}/php/use-php81 /usr/local/bin/use-php81
-#	@$(shell . ~/.${SHELL_TYPE}rc)
+	@echo " . Install use-php82"
+	@sudo ln -sfn ${PWD}/php/use-php82 /usr/local/bin/use-php82
+	@$(shell . ~/.${SHELL_TYPE}rc)
 
 install-commands: install-php-switch
 
