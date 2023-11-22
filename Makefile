@@ -1,6 +1,6 @@
 .PHONY: install install-commands install-server
 
-PHP_VERSION := 8.1
+PHP_VERSION := 8.3
 MARIADB_VERSION := 10.9
 OS_TYPE := $(shell lsb_release -si || echo "debian")
 OS_DIST := $(shell lsb_release -sc || echo "bullseye")
@@ -23,6 +23,8 @@ install-php-switch:
 	@sudo ln -sfn ${PWD}/php/use-php81 /usr/local/bin/use-php81
 	@echo " . Install use-php82"
 	@sudo ln -sfn ${PWD}/php/use-php82 /usr/local/bin/use-php82
+	@echo " . Install use-php83"
+	@sudo ln -sfn ${PWD}/php/use-php83 /usr/local/bin/use-php83
 	@$(shell . ~/.${SHELL_TYPE}rc)
 
 install-commands: install-php-switch
