@@ -1,7 +1,12 @@
 .PHONY: install install-commands install-server
 
+#~ Requirements:
+# - git
+# - lsb_release
+# - make
+
 PHP_VERSION := 8.3
-MARIADB_VERSION := 10.9
+MARIADB_VERSION := 10.11
 OS_TYPE := $(shell lsb_release -si || echo "debian")
 OS_DIST := $(shell lsb_release -sc || echo "bullseye")
 SHELL_TYPE := zsh
@@ -42,7 +47,7 @@ server-upgrade:
 
 install-cert-tool:
 	$(call header,Install Cert Tools)
-	@sudo apt install -y wget lsb-release gnupg2 software-properties-common dirmngr ca-certificates apt-transport-https debian-keyring
+	@sudo apt install -y wget lsb-release gnupg2 software-properties-common dirmngr ca-certificates apt-transport-https debian-keyring curl
 
 install-server: server-install-header server-update server-upgrade install-lamp
 
@@ -51,9 +56,9 @@ install-lamp: clean-php install-mariadb install-php install-apache2
 install-mariadb: install-cert-tool
 	$(call header,Install MariaDB)
 	@echo " . Get & save last signing key"
-	@sudo wget -O- https://mariadb.org/mariadb_release_signing_key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/mariadb.gpg
+	@sudo curl -o /etc/apt/trusted.gpg.d/mariadb_release_signing_key.asc 'https://mariadb.org/mariadb_release_signing_key.asc'
 	@echo " . Updating source.list (mariadb.list)"
-	@echo "deb [arch=amd64,arm64,ppc64el signed-by=/usr/share/keyrings/mariadb.gpg] http://mirror.mariadb.org/repo/${MARIADB_VERSION}/${OS_TYPE}/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/mariadb.list
+	@echo "deb http://mirror.mariadb.org/repo/${MARIADB_VERSION}/${OS_TYPE}/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/mariadb.list
 	@echo " . Apt list update"
 	@sudo apt update && sudo apt upgrade -y
 	@echo " . Installing mariadb-server"
@@ -73,9 +78,9 @@ clean-php:
 install-php: install-cert-tool
 	$(call header,Install PHP)
 	@echo " . Get & save last signing key"
-	@sudo wget -qO - https://packages.sury.org/php/apt.gpg | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/debian-php-8.gpg --import
-	@echo " . Updating source.list (sury-php.list)"
-	@echo "deb https://packages.sury.org/php/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/sury-php.list
+	@sudo curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+	@echo " . Updating source.list (php.list)"
+	@echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/php.list
 	@echo " . Apt list update"
 	@sudo apt update && sudo apt upgrade -y
 	@echo " . Installing PHP ${PHP_VERSION}"
@@ -92,4 +97,4 @@ install-apache2:
 	@sudo apt install -y \
 		apache2 \
 		libapache2-mod-php${PHP_VERSION}
-	@sudo a2enmod rewrite && a2enmod headers
+	@sudo a2enmod rewrite && sudo a2enmod headers
