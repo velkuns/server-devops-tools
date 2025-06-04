@@ -69,7 +69,7 @@ install-mariadb: install-cert-tool
 	@echo " . Apt list update"
 	@sudo apt update
 	@echo " . Installing mariadb-server"
-	@sudo apt install mariadb-server
+	@sudo apt install mariadb-server -y
 	@echo " . Securing the installation"
 	@sudo mysql_secure_installation
 	@echo " . Adding 'admin' account in mysql"
@@ -86,7 +86,19 @@ clean-mariadb:
 	@echo "Remove previous bundled os mariadb version"
 	@sudo apt remove --purge mariadb-server -y
 
-install-php: install-cert-tool
+install-php:
+	@if [ "${OS_TYPE}" = "debian" ]; then \
+		#make install-php-debian; \
+		echo "make install-php-debian"
+	elif [ "${OS_TYPE}" = "ubuntu" ]; then \
+		#make install-php-ubuntu; \
+		echo "make install-php-ubuntu"
+	else \
+		echo "Unsupported OS type: ${OS_TYPE}"; \
+		exit 1; \
+	fi
+
+install-php-debian: install-cert-tool
 	$(call header,Install PHP)
 	@echo " . Get & save last signing key"
 	@sudo curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
@@ -94,6 +106,21 @@ install-php: install-cert-tool
 	@echo " . Updating source.list (php.list)"
 	@echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/php.list
 	@echo " . Apt list update"
+	@sudo apt update
+	@echo " . Installing PHP ${PHP_VERSION}"
+	@sudo apt install -y \
+		php${PHP_VERSION}-common \
+		php${PHP_VERSION}-cli \
+		php${PHP_VERSION}-curl \
+		php${PHP_VERSION}-dom \
+		php${PHP_VERSION}-mbstring \
+		php${PHP_VERSION}-memcache \
+		php${PHP_VERSION}-mysql \
+		php${PHP_VERSION}-xdebug \
+		php${PHP_VERSION}-xml
+
+install-php-ubuntu: install-cert-tool
+	$(call header,Install PHP)
 	@sudo apt update
 	@echo " . Installing PHP ${PHP_VERSION}"
 	@sudo apt install -y \
