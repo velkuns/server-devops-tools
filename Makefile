@@ -112,6 +112,8 @@ install-php-debian: install-cert-tool
 
 install-php-ubuntu: install-cert-tool
 	$(call header,Install PHP)
+	@echo " . Updating source.list"
+	@sudo LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php
 	@sudo apt update
 	@echo " . Installing PHP ${PHP_VERSION}"
 	@sudo apt install -y \
