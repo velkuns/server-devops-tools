@@ -135,7 +135,7 @@ install-apache2:
 	@sudo a2enmod rewrite && sudo a2enmod headers
 
 install-php-apache2-mod:
-	$(call header,Install Apache2)
+	$(call header,Install Apache2 Mod)
 	@sudo apt install -y libapache2-mod-php${PHP_VERSION}
 
 install-done:
