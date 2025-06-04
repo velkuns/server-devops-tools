@@ -7,8 +7,8 @@
 
 PHP_VERSION := 8.4
 MARIADB_VERSION := 11.8
-OS_TYPE := $(shell lsb_release -si || echo "debian")
-OS_DIST := $(shell lsb_release -sc || echo "bullseye")
+OS_TYPE := $(shell (lsb_release -si | tr '[:upper:]' '[:lower:]') || echo "debian")
+OS_DIST := $(shell (lsb_release -sc | tr '[:upper:]' '[:lower:]') || echo "bullseye")
 SHELL_TYPE := zsh
 
 define header =
@@ -56,9 +56,9 @@ install-cert-tool:
 	@sudo mkdir -p /etc/apt/keyrings
 	@sudo chmod 755 /etc/apt/keyrings
 
-install-server: server-install-header server-update server-upgrade install-lamp
+install-server: server-install-header clean-php clean-mariadb server-update server-upgrade install-lamp
 
-install-lamp: clean-php install-mariadb install-php install-apache2
+install-lamp: clean-php clean-mariadb install-mariadb install-php install-apache2 install-done
 
 install-mariadb: install-cert-tool
 	$(call header,Install MariaDB)
@@ -80,7 +80,11 @@ install-mariadb: install-cert-tool
 
 clean-php:
 	@echo "Remove previous bundled os php version"
-	@sudo apt remove --purge php*
+	@sudo apt remove --purge php* -y
+
+clean-mariadb:
+	@echo "Remove previous bundled os mariadb version"
+	@sudo apt remove --purge mariadb-server -y
 
 install-php: install-cert-tool
 	$(call header,Install PHP)
@@ -109,3 +113,20 @@ install-apache2:
 		apache2 \
 		libapache2-mod-php${PHP_VERSION}
 	@sudo a2enmod rewrite && sudo a2enmod headers
+
+install-done:
+	$(call header,Installation Done)
+	@echo " Installation completed successfully!"
+	@echo " . Installed PHP Versions:    ${PHP_VERSION}"
+	@echo " . Installed MariaDB Version: ${MARIADB_VERSION}"
+	@echo ""
+	@echo "If you want add & install another PHP version, you can run:"
+	@echo "make install-php"
+	@echo "You can also run the following commands to install utilities to allow you to switch between php versions:"
+	@echo "make install-php-switch"
+	@echo " . Then, you can now use the following commands to switch PHP versions:"
+	@echo "use-php74"
+	@echo "use-php81"
+	@echo "use-php82"
+	@echo "use-php83"
+	@echo "use-php84"
