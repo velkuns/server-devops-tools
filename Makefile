@@ -6,7 +6,7 @@
 # - make
 
 PHP_VERSION := 8.4
-MARIADB_VERSION := 10.11
+MARIADB_VERSION := 11.8
 OS_TYPE := $(shell lsb_release -si || echo "debian")
 OS_DIST := $(shell lsb_release -sc || echo "bullseye")
 SHELL_TYPE := zsh
@@ -16,9 +16,12 @@ define header =
 endef
 
 display-config:
-	$(call header,Show Config)
+	$(call header,OS Config)
 	@echo "  . os type: ${OS_TYPE}"
 	@echo "  . os dist: ${OS_DIST}"
+	$(call header,Software Version to install)
+	@echo "  . PHP Version to Install:     ${PHP_VERSION}"
+	@echo "  . MariaDB Version to Install: ${MARIADB_VERSION}"
 
 install-php-switch:
 	$(call header,Install PHP Switch commands)
@@ -60,7 +63,7 @@ install-mariadb: install-cert-tool
 	@echo " . Get & save last signing key"
 	@sudo curl -o /etc/apt/trusted.gpg.d/mariadb_release_signing_key.asc 'https://mariadb.org/mariadb_release_signing_key.asc'
 	@echo " . Updating source.list (mariadb.list)"
-	@echo "deb http://mirror.mariadb.org/repo/${MARIADB_VERSION}/${OS_TYPE}/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/mariadb.list
+	@echo "deb http://mariadb.mirrors.ovh.net/MariaDB/repo/${MARIADB_VERSION}/${OS_TYPE}/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/mariadb.list
 	@echo " . Apt list update"
 	@sudo apt update && sudo apt upgrade -y
 	@echo " . Installing mariadb-server"

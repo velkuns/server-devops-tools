@@ -15,13 +15,17 @@ git clone https://github.com/velkuns/server-devops-tools
 
 
 ## Usage
-Before using the tool, you must choose the version of PHP you want to install. 
-You can do this by editing the `Makefile` and setting the `PHP_VERSION` variable to the desired version 
-(e.g., `7.4`, `8.0`, etc.).
+- Default version of PHP is:     `8.4`
+- Default version of MariaDB is: `11.8`
 
-Do the same for the `MARIADB_VERSION` variable to set the desired version of MariaDB.
+You can change the default versions of PHP and MariaDB in the `Makefile` file, by adding after the make command:
+- for PHP: `PHP_VERSION=X.Y`
+- for MariaDB: `MARIADB_VERSION=X.Y`
 
-Then you can run make commands to install the desired software.
+Example:
+```shell
+make install-server PHP_VERSION=8.3 MARIADB_VERSION=11.7
+```
 
 ### Commands
 
@@ -30,9 +34,19 @@ Then you can run make commands to install the desired software.
 make display-config
 ```
 
+If you need to install specific versions of PHP and MariaDB, you can specify them as follows:
+```shell
+make display-config PHP_VERSION=8.3 MARIADB_VERSION=11.7
+```
+
 #### Install full server stack (update & upgrade system + install PHP, MariaDB, Apache2)
 ```shell
 make install-server
+```
+
+If you need to install specific versions of PHP and MariaDB, you can specify them as follows:
+```shell
+make install-server PHP_VERSION=8.3 MARIADB_VERSION=11.7
 ```
 
 #### Install AMP stack (Apache, MariaDB, PHP)
