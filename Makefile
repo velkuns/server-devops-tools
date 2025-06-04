@@ -58,7 +58,7 @@ install-cert-tool:
 
 install-server: server-install-header clean-php clean-mariadb server-update server-upgrade install-lamp
 
-install-lamp: clean-php clean-mariadb install-mariadb install-php install-apache2 install-done
+install-lamp: clean-php clean-mariadb install-mariadb install-apache2 install-php install-done
 
 install-mariadb: install-cert-tool
 	$(call header,Install MariaDB)
@@ -86,7 +86,9 @@ clean-mariadb:
 	@echo "Remove previous bundled os mariadb version"
 	@sudo apt remove --purge mariadb-server -y
 
-install-php:
+install-php: install-php-cli install-php-apache2-mod
+
+install-php-cli:
 	@if [ "${OS_TYPE}" = "debian" ]; then make install-php-debian; elif [ "${OS_TYPE}" = "ubuntu" ]; then make install-php-ubuntu; else echo "Unsupported OS type: ${OS_TYPE}"; exit 1; fi
 
 install-php-debian: install-cert-tool
@@ -129,10 +131,12 @@ install-php-ubuntu: install-cert-tool
 
 install-apache2:
 	$(call header,Install Apache2)
-	@sudo apt install -y \
-		apache2 \
-		libapache2-mod-php${PHP_VERSION}
+	@sudo apt install -y apache2
 	@sudo a2enmod rewrite && sudo a2enmod headers
+
+install-php-apache2-mod:
+	$(call header,Install Apache2)
+	@sudo apt install -y libapache2-mod-php${PHP_VERSION}
 
 install-done:
 	$(call header,Installation Done)
