@@ -5,7 +5,7 @@
 # - lsb_release
 # - make
 
-PHP_VERSION := 8.3
+PHP_VERSION := 8.4
 MARIADB_VERSION := 10.11
 OS_TYPE := $(shell lsb_release -si || echo "debian")
 OS_DIST := $(shell lsb_release -sc || echo "bullseye")
@@ -30,6 +30,8 @@ install-php-switch:
 	@sudo ln -sfn ${PWD}/php/use-php82 /usr/local/bin/use-php82
 	@echo " . Install use-php83"
 	@sudo ln -sfn ${PWD}/php/use-php83 /usr/local/bin/use-php83
+	@echo " . Install use-php84"
+	@sudo ln -sfn ${PWD}/php/use-php84 /usr/local/bin/use-php84
 	@$(shell . ~/.${SHELL_TYPE}rc)
 
 install-commands: install-php-switch
@@ -88,9 +90,12 @@ install-php: install-cert-tool
 		php${PHP_VERSION}-common \
 		php${PHP_VERSION}-cli \
 		php${PHP_VERSION}-curl \
+		php${PHP_VERSION}-dom \
 		php${PHP_VERSION}-mbstring \
-		php${PHP_VERSION}-memcache \
-		php${PHP_VERSION}-mysql
+		#php${PHP_VERSION}-memcache \
+		#php${PHP_VERSION}-mysql \
+		#php${PHP_VERSION}-xdebug \
+		#php${PHP_VERSION}-xml
 
 install-apache2:
 	$(call header,Install Apache2)
