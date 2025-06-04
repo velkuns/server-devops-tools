@@ -87,16 +87,7 @@ clean-mariadb:
 	@sudo apt remove --purge mariadb-server -y
 
 install-php:
-	@if [ "${OS_TYPE}" = "debian" ]; then \
-		#make install-php-debian; \
-		echo "make install-php-debian"
-	elif [ "${OS_TYPE}" = "ubuntu" ]; then \
-		#make install-php-ubuntu; \
-		echo "make install-php-ubuntu"
-	else \
-		echo "Unsupported OS type: ${OS_TYPE}"; \
-		exit 1; \
-	fi
+	@if [ "${OS_TYPE}" = "debian" ]; then echo "make install-php-debian"; elif [ "${OS_TYPE}" = "ubuntu" ]; then echo "make install-php-ubuntu"; else echo "Unsupported OS type: ${OS_TYPE}"; exit 1; fi
 
 install-php-debian: install-cert-tool
 	$(call header,Install PHP)
