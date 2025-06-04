@@ -56,6 +56,11 @@ make install-lamp
 
 #### Install only PHP
 ```shell
+make install-php-cli
+```
+
+#### Install only PHP + apache2 mod
+```shell
 make install-php
 ```
 
