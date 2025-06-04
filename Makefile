@@ -53,6 +53,8 @@ server-upgrade:
 install-cert-tool:
 	$(call header,Install Cert Tools)
 	@sudo apt install -y wget lsb-release gnupg2 software-properties-common dirmngr ca-certificates apt-transport-https debian-keyring curl
+	@sudo mkdir -p /etc/apt/keyrings
+	@sudo chmod 755 /etc/apt/keyrings
 
 install-server: server-install-header server-update server-upgrade install-lamp
 
@@ -61,11 +63,11 @@ install-lamp: clean-php install-mariadb install-php install-apache2
 install-mariadb: install-cert-tool
 	$(call header,Install MariaDB)
 	@echo " . Get & save last signing key"
-	@sudo curl -o /etc/apt/trusted.gpg.d/mariadb_release_signing_key.asc 'https://mariadb.org/mariadb_release_signing_key.asc'
+	@sudo curl -o /etc/apt/keyrings/mariadb-keyring.pgp 'https://mariadb.org/mariadb_release_signing_key.pgp'
 	@echo " . Updating source.list (mariadb.list)"
-	@echo "deb http://mariadb.mirrors.ovh.net/MariaDB/repo/${MARIADB_VERSION}/${OS_TYPE}/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/mariadb.list
+	@echo "deb [signed-by=/etc/apt/keyrings/mariadb-keyring.pgp] http://mariadb.mirrors.ovh.net/MariaDB/repo/${MARIADB_VERSION}/${OS_TYPE} ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/mariadb.list
 	@echo " . Apt list update"
-	@sudo apt update && sudo apt upgrade -y
+	@sudo apt update
 	@echo " . Installing mariadb-server"
 	@sudo apt install mariadb-server
 	@echo " . Securing the installation"
@@ -83,11 +85,12 @@ clean-php:
 install-php: install-cert-tool
 	$(call header,Install PHP)
 	@echo " . Get & save last signing key"
-	@sudo curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+	@sudo curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
+	@sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
 	@echo " . Updating source.list (php.list)"
-	@echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/php.list
+	@echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ ${OS_DIST} main" | sudo tee /etc/apt/sources.list.d/php.list
 	@echo " . Apt list update"
-	@sudo apt update && sudo apt upgrade -y
+	@sudo apt update
 	@echo " . Installing PHP ${PHP_VERSION}"
 	@sudo apt install -y \
 		php${PHP_VERSION}-common \
