@@ -5,10 +5,8 @@ if [ -f /usr/bin/php8.3 ]; then
 
     sudo update-alternatives --set php /usr/bin/php8.3
 
-    if [ -f /usr/bin/php7.4 ]; then sudo a2dismod php7.4; fi
-    if [ -f /usr/bin/php8.1 ]; then sudo a2dismod php8.1; fi
-    if [ -f /usr/bin/php8.2 ]; then sudo a2dismod php8.2; fi
     if [ -f /usr/bin/php8.4 ]; then sudo a2dismod php8.4; fi
+    if [ -f /usr/bin/php8.5 ]; then sudo a2dismod php8.5; fi
 
     sudo a2enmod php8.3
 

@@ -15,16 +15,19 @@ git clone https://github.com/velkuns/server-devops-tools
 
 
 ## Usage
-- Default version of PHP is:     `8.4`
-- Default version of MariaDB is: `11.8`
+- Default version of PHP is:     `8.5`
+- Default version of MariaDB is: `12.2`
 
 You can change the default versions of PHP and MariaDB in the `Makefile` file, by adding after the make command:
 - for PHP: `PHP_VERSION=X.Y`
 - for MariaDB: `MARIADB_VERSION=X.Y`
 
+Default php extension installed: `common cli mbstring`.
+To add more extension, you can specify them via `php_ext="curl memcached mysql xml xdebug zip"`
+
 Example:
 ```shell
-make install-server PHP_VERSION=8.3 MARIADB_VERSION=11.7
+make install-server PHP_VERSION=8.5 MARIADB_VERSION=11.7 php_ext="curl mysql xdebug zip"
 ```
 
 ### Commands
@@ -36,7 +39,7 @@ make display-config
 
 If you need to install specific versions of PHP and MariaDB, you can specify them as follows:
 ```shell
-make display-config PHP_VERSION=8.3 MARIADB_VERSION=11.7
+make display-config PHP_VERSION=8.3 MARIADB_VERSION=11.7 php_ext="curl mysql xdebug zip"
 ```
 
 #### Install full server stack (update & upgrade system + install PHP, MariaDB, Apache2)
